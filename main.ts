@@ -1,16 +1,20 @@
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     bullets = []
-    for (let index = 0; index <= 4; index++) {
+    for (let index = 0; index <= bcount - 1; index++) {
         bullets.push(sprites.create(bullet, SpriteKind.Projectile))
         bullets[index].setPosition(sinistar.x, sinistar.y)
-        bullets[index].setVelocity(Math.cos((3.1416)/index)  * speed, Math.sin((3.1416) /index) * speed)
+        bullets[index].setVelocity(Math.cos(3.1416 * 2 * index / bcount) * speed, 
+        Math.sin(3.1416 * 2 * index / bcount) * speed )
+        pause(10)
     }
 })
 let bullets: Sprite[] = []
 let sinistar: Sprite = null
 let bullet: Image = null
 let speed = 0
-speed = 20
+let bcount = 0
+bcount = 7
+speed = 40
 let sinistar_F0 = img`
     .................888888...888888.................
     .................888888...888888.................
