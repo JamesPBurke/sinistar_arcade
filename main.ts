@@ -1,3 +1,16 @@
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    bullets = []
+    for (let index = 0; index <= 4; index++) {
+        bullets.push(sprites.create(bullet, SpriteKind.Projectile))
+        bullets[index].setPosition(sinistar.x, sinistar.y)
+        bullets[index].setVelocity(Math.cos((3.1416)/index)  * speed, Math.sin((3.1416) /index) * speed)
+    }
+})
+let bullets: Sprite[] = []
+let sinistar: Sprite = null
+let bullet: Image = null
+let speed = 0
+speed = 20
 let sinistar_F0 = img`
     .................888888...888888.................
     .................888888...888888.................
@@ -121,7 +134,12 @@ let bomb = img`
     . . . . 8 8 8 2 8 8 8 . . . . 
     . . . . 8 8 . . . 8 8 . . . . 
     `
-let sinistar = sprites.create(sinistar_F0, SpriteKind.Player)
+bullet = img`
+    . 7 . 
+    7 2 7 
+    . 7 . 
+    `
+sinistar = sprites.create(sinistar_F0, SpriteKind.Player)
 controller.moveSprite(sinistar)
 animation.runImageAnimation(
 sinistar,
