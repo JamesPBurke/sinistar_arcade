@@ -1,0 +1,17 @@
+{
+    "image1": {
+        "data": "hwQKAAgAAAAAAAgAAIgIAICYiABYmJgIiJiYCFiYmAiImJgIUJiIAACICAAAAAgA",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "Ship 2"
+    },
+    "image2": {
+        "data": "hwQKAAgAAAAAAAgAAIgIAFCYiACImJgIWJiYCIiYmAhYmJgIgJiIAACICAAAAAgA",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "Ship n"
+    },
+    "*": {
+        "mimeType": "image/x-mkcd-f4",
+        "dataEncoding": "base64",
+        "namespace": "myImages"
+    }
+}

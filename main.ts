@@ -1,20 +1,15 @@
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    bullets = []
-    for (let index = 0; index <= bcount - 1; index++) {
-        bullets.push(sprites.create(bullet, SpriteKind.Projectile))
-        bullets[index].setPosition(sinistar.x, sinistar.y)
-        bullets[index].setVelocity(Math.cos(3.1416 * 2 * index / bcount) * speed, 
-        Math.sin(3.1416 * 2 * index / bcount) * speed )
-        pause(10)
-    }
+	
 })
 let bullets: Sprite[] = []
-let sinistar: Sprite = null
-let bullet: Image = null
-let speed = 0
-let bcount = 0
-bcount = 7
-speed = 40
+let oldvely = 0
+let oldvelx = 0
+let ship_f1 = assets.image`Ship n`
+let ship_f2 = assets.image`Ship 2`
+let ship = sprites.create(assets.image`Ship 2`, SpriteKind.Player)
+controller.moveSprite(ship)
+let bcount = 7
+let speed = 40
 let sinistar_F0 = img`
     .................888888...888888.................
     .................888888...888888.................
@@ -138,16 +133,37 @@ let bomb = img`
     . . . . 8 8 8 2 8 8 8 . . . . 
     . . . . 8 8 . . . 8 8 . . . . 
     `
-bullet = img`
+let bullet = img`
     . 7 . 
     7 2 7 
     . 7 . 
     `
-sinistar = sprites.create(sinistar_F0, SpriteKind.Player)
-controller.moveSprite(sinistar)
+let sinistar = sprites.create(sinistar_F0, SpriteKind.Enemy)
 animation.runImageAnimation(
 sinistar,
 [sinistar_F0, sinistar_F1],
 500,
 true
 )
+animation.runImageAnimation(
+ship,
+[ship_f1, ship_f2],
+100,
+true
+)
+tiles.setTilemap(tilemap`level1`)
+scene.cameraFollowSprite(ship)
+game.onUpdate(function () {
+    oldvelx = sinistar.vx
+    oldvely = sinistar.vy
+    sinistar.setVelocity((ship.x - sinistar.x) / 4 + oldvelx / 1.5, (ship.y - sinistar.y) / 4 + oldvely / 1.5)
+})
+game.onUpdateInterval(5000, function () {
+    bullets = []
+    for (let index = 0; index <= bcount - 1; index++) {
+        bullets.push(sprites.create(bullet, SpriteKind.Projectile))
+        bullets[index].setPosition(sinistar.x, sinistar.y)
+        bullets[index].setVelocity(Math.cos(3.1416 * 2 * index / bcount) * speed, Math.sin(3.1416 * 2 * index / bcount) * speed)
+        pause(10)
+    }
+})
