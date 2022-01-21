@@ -1,15 +1,71 @@
-controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-	
+function fireMissile () {
+    missile.destroy()
+    
+}
+function fireBullets (vx: number, vy: number) {
+    for (let value of bullets) {
+        value.destroy()
+    }
+    bullets = []
+    for (let index = 0; index <= bcount - 1; index++) {
+        bullets.push(sprites.create(bullet, SpriteKind.Projectile))
+        bullets[index].setFlag(SpriteFlag.AutoDestroy, false)
+        bullets[index].setPosition(sinistar.x, sinistar.y)
+        bullets[index].setVelocity(Math.cos(3.1416 * 2 * index / bcount) * speed + vx, Math.sin(3.1416 * 2 * index / bcount) * speed + vy)
+        pause(10)
+    }
+    fireball = sprites.createProjectileFromSprite(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . 2 2 . . . . . . . 
+        . . . . . . 3 1 1 3 . . . . . . 
+        . . . . . 2 1 1 1 1 2 . . . . . 
+        . . . . . 2 1 1 1 1 2 . . . . . 
+        . . . . . . 3 1 1 3 . . . . . . 
+        . . . . . . . 2 2 . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, sinistar, (ship.x - sinistar.x) * 3, (ship.y - sinistar.y) * 3)
+}
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
+    sprite.startEffect(effects.fire, 200)
+    music.smallCrash.playUntilDone()
+    otherSprite.destroy()
+    scene.cameraShake(5, 500)
+    info.changeLifeBy(-1)
 })
-let bullets: Sprite[] = []
+scene.onHitWall(SpriteKind.Projectile, function (sprite, location) {
+    sprite.destroy(effects.spray, 100)
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
+    sprite.startEffect(effects.fire, 200)
+    music.pewPew.play()
+    scene.cameraShake(6, 500)
+})
 let oldvely = 0
 let oldvelx = 0
+let fireball: Sprite = null
+let bullets: Sprite[] = []
+let missile: Sprite = null
+let sinistar: Sprite = null
+let bullet: Image = null
+let bomb: Image = null
+let speed = 0
+let bcount = 0
+let ship: Sprite = null
+info.setLife(5)
 let ship_f1 = assets.image`Ship n`
 let ship_f2 = assets.image`Ship 2`
-let ship = sprites.create(assets.image`Ship 2`, SpriteKind.Player)
+ship = sprites.create(assets.image`Ship 2`, SpriteKind.Player)
 controller.moveSprite(ship)
-let bcount = 7
-let speed = 40
+bcount = 17
+speed = 60
 let sinistar_F0 = img`
     .................888888...888888.................
     .................888888...888888.................
@@ -116,7 +172,7 @@ let sinistar_F1 = img`
     .................6b6b6b...b6b6b6.................
     .................888888...888888.................
     `
-let bomb = img`
+bomb = img`
     . . . . 8 8 . . . 8 8 . . . . 
     . . . . 8 8 8 2 8 8 8 . . . . 
     . . . 2 c 8 c c c 8 c 2 . . . 
@@ -133,12 +189,13 @@ let bomb = img`
     . . . . 8 8 8 2 8 8 8 . . . . 
     . . . . 8 8 . . . 8 8 . . . . 
     `
-let bullet = img`
+bullet = img`
     . 7 . 
     7 2 7 
     . 7 . 
     `
-let sinistar = sprites.create(sinistar_F0, SpriteKind.Enemy)
+sinistar = sprites.create(sinistar_F0, SpriteKind.Enemy)
+sinistar.setPosition(350, 110)
 animation.runImageAnimation(
 sinistar,
 [sinistar_F0, sinistar_F1],
@@ -153,17 +210,16 @@ true
 )
 tiles.setTilemap(tilemap`level1`)
 scene.cameraFollowSprite(ship)
+missile = sprites.create(bomb, SpriteKind.Projectile)
+missile.destroy()
 game.onUpdate(function () {
     oldvelx = sinistar.vx
     oldvely = sinistar.vy
     sinistar.setVelocity((ship.x - sinistar.x) / 4 + oldvelx / 1.5, (ship.y - sinistar.y) / 4 + oldvely / 1.5)
 })
 game.onUpdateInterval(5000, function () {
-    bullets = []
-    for (let index = 0; index <= bcount - 1; index++) {
-        bullets.push(sprites.create(bullet, SpriteKind.Projectile))
-        bullets[index].setPosition(sinistar.x, sinistar.y)
-        bullets[index].setVelocity(Math.cos(3.1416 * 2 * index / bcount) * speed, Math.sin(3.1416 * 2 * index / bcount) * speed)
-        pause(10)
-    }
+    fireBullets(sinistar.vx, sinistar.vy)
+})
+game.onUpdateInterval(8000, function () {
+    fireMissile()
 })
