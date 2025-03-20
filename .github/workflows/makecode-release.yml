@@ -4,6 +4,7 @@ on:
   release:
     types:
       - created
+
 jobs:
   build:
 
@@ -11,12 +12,12 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [8.x]
+        node-version: [16.x] # Updated Node.js version
 
     steps:
       - uses: actions/checkout@v1
       - name: install node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2 # Updated setup-node version
         with:
           node-version: ${{ matrix.node-version }}
       - name: install makecode
