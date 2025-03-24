@@ -1,5 +1,6 @@
 {
     "name": "sinistar arcade",
+    "version": "0.3.0-alpha",
     "description": "",
     "dependencies": {
         "device": "*"
